@@ -9,7 +9,12 @@ namespace DataLayer
 {
     public class PageRepository : IPageRepository
     {
-        EglantineCMSContext db = new EglantineCMSContext();
+        private EglantineCMSContext db;
+
+        public PageRepository(EglantineCMSContext context)
+        {
+            db = context;
+        }
         public bool DeletePage(Page page)
         {
             try
@@ -28,6 +33,11 @@ namespace DataLayer
             var page = GetPageById(pageId);
             DeletePage(page);
             return true;
+        }
+
+        public void Dispose()
+        {
+            db.Dispose();
         }
 
         public IEnumerable<Page> GetAllPage()

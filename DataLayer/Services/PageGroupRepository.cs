@@ -9,7 +9,12 @@ namespace DataLayer
 {
     public class PageGroupRepository : IPageGroupRepository
     {
-        EglantineCMSContext db = new EglantineCMSContext();
+        private EglantineCMSContext db;
+
+        public PageGroupRepository(EglantineCMSContext context)
+        {
+            db = context;
+        }
 
         public bool DeleteGroup(PageGroup pageGroup)
         {
@@ -29,6 +34,11 @@ namespace DataLayer
             var group = GetGroupById(groupId);
             DeleteGroup(group);
             return true;
+        }
+
+        public void Dispose()
+        {
+            db.Dispose();
         }
 
         public IEnumerable<PageGroup> GetAllGroups()
