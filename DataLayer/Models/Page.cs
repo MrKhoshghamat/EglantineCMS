@@ -24,10 +24,12 @@ namespace DataLayer
         [Display(Name = "توضیح مختصر")]
         [Required(ErrorMessage = "لطفا {0} را وارد کنید")]
         [MaxLength(350, ErrorMessage = "تعداد کارکترهای {0} نمیتواند بیشتر از {1} باشد")]
+        [DataType(DataType.MultilineText)]
         public string ShortDescription { get; set; }
 
         [Display(Name = "متن")]
         [Required(ErrorMessage = "لطفا {0} را وارد کنید")]
+        [DataType(DataType.MultilineText)]
         public string Text { get; set; }
 
         [Display(Name = "تعداد بازدید")]
@@ -40,6 +42,7 @@ namespace DataLayer
         public bool ShownInSlider { get; set; }
 
         [Display(Name = "تاریخ انتشار")]
+        [DisplayFormat(DataFormatString = "{0: yyyy/MM/dd}")]
         public DateTime CreationDateTime { get; set; }
 
         public virtual PageGroup PageGroup { get; set; }

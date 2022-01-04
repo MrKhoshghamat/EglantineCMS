@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -12,13 +13,20 @@ namespace EglantineCMS.Areas.Admin.Controllers
 {
     public class PagesController : Controller
     {
+        private IPageRepository pageRepository;
+        private IPageGroupRepository pageGroupRepository;
         private EglantineCMSContext db = new EglantineCMSContext();
+
+        public PagesController()
+        {
+            pageRepository = new PageRepository(db);
+            pageGroupRepository = new PageGroupRepository(db);
+        }
 
         // GET: Admin/Pages
         public ActionResult Index()
         {
-            var pages = db.Pages.Include(p => p.PageGroup);
-            return View(pages.ToList());
+            return View(pageRepository.GetAllPage());
         }
 
         // GET: Admin/Pages/Details/5
@@ -39,7 +47,7 @@ namespace EglantineCMS.Areas.Admin.Controllers
         // GET: Admin/Pages/Create
         public ActionResult Create()
         {
-            ViewBag.GroupID = new SelectList(db.PageGroups, "GroupID", "GroupTitle");
+            ViewBag.GroupID = new SelectList(pageGroupRepository.GetAllGroups(), "GroupID", "GroupTitle");
             return View();
         }
 
@@ -48,12 +56,19 @@ namespace EglantineCMS.Areas.Admin.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "PageID,GroupID,Title,ShortDescription,Text,Visit,ImageName,ShownInSlider,CreationDateTime")] Page page)
+        public ActionResult Create([Bind(Include = "PageID,GroupID,Title,ShortDescription,Text,Visit,ImageName,ShownInSlider,CreationDateTime")] Page page, HttpPostedFileBase imgUp)
         {
             if (ModelState.IsValid)
             {
-                db.Pages.Add(page);
-                db.SaveChanges();
+                page.Visit = 0;
+                page.CreationDateTime = DateTime.Now;
+                if (imgUp != null)
+                {
+                    page.ImageName = Guid.NewGuid() + Path.GetExtension(imgUp.FileName);
+                    imgUp.SaveAs(Server.MapPath("~/Images/" + page.ImageName));
+                }
+                pageRepository.InsertPage(page);
+                pageRepository.Save();
                 return RedirectToAction("Index");
             }
 
@@ -68,12 +83,12 @@ namespace EglantineCMS.Areas.Admin.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Page page = db.Pages.Find(id);
+            Page page = pageRepository.GetPageById(id.Value);
             if (page == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.GroupID = new SelectList(db.PageGroups, "GroupID", "GroupTitle", page.GroupID);
+            ViewBag.GroupID = new SelectList(pageGroupRepository.GetAllGroups(), "GroupID", "GroupTitle", page.GroupID);
             return View(page);
         }
 
@@ -82,12 +97,22 @@ namespace EglantineCMS.Areas.Admin.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "PageID,GroupID,Title,ShortDescription,Text,Visit,ImageName,ShownInSlider,CreationDateTime")] Page page)
+        public ActionResult Edit([Bind(Include = "PageID,GroupID,Title,ShortDescription,Text,Visit,ImageName,ShownInSlider,CreationDateTime")] Page page, HttpPostedFileBase imgUp)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(page).State = EntityState.Modified;
-                db.SaveChanges();
+                if (imgUp != null)
+                {
+                    if (page.ImageName != null)
+                    {
+                        System.IO.File.Delete(Server.MapPath("~/Images/" + page.ImageName));
+                    }
+
+                    page.ImageName = Guid.NewGuid() + Path.GetExtension(imgUp.FileName);
+                    imgUp.SaveAs(Server.MapPath("~/Images/" + page.ImageName));
+                }
+                pageRepository.UpdatePage(page);
+                pageRepository.Save();
                 return RedirectToAction("Index");
             }
             ViewBag.GroupID = new SelectList(db.PageGroups, "GroupID", "GroupTitle", page.GroupID);
@@ -101,7 +126,7 @@ namespace EglantineCMS.Areas.Admin.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Page page = db.Pages.Find(id);
+            Page page = pageRepository.GetPageById(id.Value);
             if (page == null)
             {
                 return HttpNotFound();
@@ -114,9 +139,13 @@ namespace EglantineCMS.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Page page = db.Pages.Find(id);
-            db.Pages.Remove(page);
-            db.SaveChanges();
+            var page = pageRepository.GetPageById(id);
+            if (page.ImageName != null)
+            {
+                System.IO.File.Delete(Server.MapPath("~/Images/" + page.ImageName));
+            }
+            pageRepository.DeletePage(page);
+            pageRepository.Save();
             return RedirectToAction("Index");
         }
 
@@ -124,6 +153,8 @@ namespace EglantineCMS.Areas.Admin.Controllers
         {
             if (disposing)
             {
+                pageGroupRepository.Dispose();
+                pageRepository.Dispose();
                 db.Dispose();
             }
             base.Dispose(disposing);
