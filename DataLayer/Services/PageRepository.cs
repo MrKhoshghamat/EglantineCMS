@@ -63,9 +63,29 @@ namespace DataLayer
             }
         }
 
+        public IEnumerable<Page> LatestNews(int take = 4)
+        {
+            return db.Pages.OrderByDescending(p=>p.CreationDateTime).Take(take);
+        }
+
+        public IEnumerable<Page> PagesInSlider()
+        {
+            return db.Pages.Where(p => p.ShownInSlider == true);
+        }
+
         public void Save()
         {
             db.SaveChanges();
+        }
+
+        public IEnumerable<Page> ShowPageByGroupId(int groupId)
+        {
+            return db.Pages.Where(p => p.GroupID == groupId);
+        }
+
+        public IEnumerable<Page> TopNews(int take = 4)
+        {
+            return db.Pages.OrderByDescending(p => p.Visit).Take(take);
         }
 
         public bool UpdatePage(Page page)

@@ -67,6 +67,7 @@
     <Compile Include="Services\PageCommentRepository.cs" />
     <Compile Include="Services\PageGroupRepository.cs" />
     <Compile Include="Services\PageRepository.cs" />
+    <Compile Include="ViewModels\ShowGroupViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

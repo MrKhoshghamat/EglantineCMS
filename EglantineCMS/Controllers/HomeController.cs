@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataLayer;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -8,6 +9,13 @@ namespace EglantineCMS.Controllers
 {
     public class HomeController : Controller
     {
+        EglantineCMSContext db = new EglantineCMSContext();
+        private IPageRepository pageRepository;
+
+        public HomeController()
+        {
+            pageRepository = new PageRepository(db);
+        }
         public ActionResult Index()
         {
             return View();
@@ -26,5 +34,11 @@ namespace EglantineCMS.Controllers
 
             return View();
         }
+
+        public ActionResult Slider()
+        {
+            return PartialView(pageRepository.PagesInSlider());
+        }
+
     }
 }
