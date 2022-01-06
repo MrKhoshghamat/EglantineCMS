@@ -78,6 +78,16 @@ namespace DataLayer
             db.SaveChanges();
         }
 
+        public IEnumerable<Page> SearchPage(string search)
+        {
+            return db.Pages.Where(
+                p => 
+                p.Title.Contains(search) || 
+                p.ShortDescription.Contains(search) || 
+                p.Tags.Contains(search) || 
+                p.Text.Contains(search)).Distinct();
+        }
+
         public IEnumerable<Page> ShowPageByGroupId(int groupId)
         {
             return db.Pages.Where(p => p.GroupID == groupId);

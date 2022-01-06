@@ -56,6 +56,10 @@
     <Compile Include="Migrations\202201011708477_InitialDatabase.designer.cs">
       <DependentUpon>202201011708477_InitialDatabase.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202201061102136_AddPageTags.cs" />
+    <Compile Include="Migrations\202201061102136_AddPageTags.designer.cs">
+      <DependentUpon>202201061102136_AddPageTags.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Page.cs" />
     <Compile Include="Models\PageComment.cs" />
@@ -77,6 +81,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202201011708477_InitialDatabase.resx">
       <DependentUpon>202201011708477_InitialDatabase.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202201061102136_AddPageTags.resx">
+      <DependentUpon>202201061102136_AddPageTags.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

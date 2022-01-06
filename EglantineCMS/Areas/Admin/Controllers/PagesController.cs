@@ -56,7 +56,7 @@ namespace EglantineCMS.Areas.Admin.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "PageID,GroupID,Title,ShortDescription,Text,Visit,ImageName,ShownInSlider,CreationDateTime")] Page page, HttpPostedFileBase imgUp)
+        public ActionResult Create([Bind(Include = "PageID,GroupID,Title,ShortDescription,Text,Visit,ImageName,ShownInSlider,CreationDateTime,Tags")] Page page, HttpPostedFileBase imgUp)
         {
             if (ModelState.IsValid)
             {
@@ -97,7 +97,7 @@ namespace EglantineCMS.Areas.Admin.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "PageID,GroupID,Title,ShortDescription,Text,Visit,ImageName,ShownInSlider,CreationDateTime")] Page page, HttpPostedFileBase imgUp)
+        public ActionResult Edit([Bind(Include = "PageID,GroupID,Title,ShortDescription,Text,Visit,ImageName,ShownInSlider,CreationDateTime,Tags")] Page page, HttpPostedFileBase imgUp)
         {
             if (ModelState.IsValid)
             {
