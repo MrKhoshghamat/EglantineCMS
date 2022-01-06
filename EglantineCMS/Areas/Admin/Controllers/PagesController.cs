@@ -11,6 +11,7 @@ using DataLayer;
 
 namespace EglantineCMS.Areas.Admin.Controllers
 {
+    [Authorize]
     public class PagesController : Controller
     {
         private IPageRepository pageRepository;
